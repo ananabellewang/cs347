@@ -1,40 +1,80 @@
-const article = document.querySelector("article");
+// import styles from "https://fonts.googleapis.com/icon?family=Material+Icons";
+function addCss(fileName) {
+  // var head = document.head;
+  // var link = document.createElement("link");
 
-// `document.querySelector` may return null if the selector doesn't match anything.
-if (article) {
-  const text = article.textContent;
-  const wordMatchRegExp = /[^\s]+/g; // Regular expression
-  const words = text.matchAll(wordMatchRegExp);
-  // matchAll returns an iterator, convert to array to get word count
-  const wordCount = [...words].length;
-  const readingTime = Math.round(wordCount / 200);
-  const badge = document.createElement("p");
-  // Use the same styling as the publish information in an article's header
-  badge.classList.add("color-secondary-text", "type--caption");
-  badge.textContent = `⏱️ ${readingTime} min read`;
+  // link.type = "text/css";
+  // link.rel = "stylesheet";
+  // link.href = fileName;
 
-  // Support for API reference docs
-  const heading = article.querySelector("h1");
-  // Support for article docs with date
-  const date = article.querySelector("time")?.parentNode;
-
-  (date ?? heading).insertAdjacentElement("afterend", badge);
+  // head.appendChild(link);
+  var link = document.createElement("link");
+  link.href = fileName;
+  // link.type = "text/css";
+  link.rel = "stylesheet";
+  document.getElementsByTagName("head")[0].appendChild(link);
 }
 
-// var cssId = "progressBar";  // you could encode the css path itself to generate id..
-// if (!document.getElementById(cssId))
-// {
-//     var head  = document.getElementsByTagName("head")[0];
-//     var link  = document.createElement("link");
-//     link.id   = cssId;
-//     link.rel  = "stylesheet";
-//     link.type = "text/css";
-//     link.href = "components/";
-//     link.media = "all";
-//     head.appendChild(link);
-// }
+addCss("https://fonts.googleapis.com/icon?family=Material+Icons");
 
-// if (false) {
-//     const progressBar = document.createElement("div");
-//     progressBar.classList.add("color-secondary-text", "type--caption"); 
-// }
+// Notification body.
+const notification = document.createElement("div");
+notification.className = 'acho-notification';
+
+// Notification text.
+const notificationText = document.createElement('p');
+notification.appendChild(notificationText);
+
+// Add to current page.
+document.body.appendChild(notification);
+
+// Progress Bar !!!
+const progress = document.createElement("div")
+progress.className = "progress_bar";
+// bell
+const bell = document.createElement("div")
+bell.className = "bell";
+bell.textContent = "🔔"
+progress.appendChild(bell);
+
+// climber
+const character = document.createElement("div")
+character.className = "character";
+character.textContent = "🧗"
+// const character = document.createElement("img")
+// character.src = chrome.runtime.getURL("images/person-climbing.png");
+character.addEventListener('click', function () {
+  character.classList.toggle("move");
+});
+progress.appendChild(character);
+
+document.body.appendChild(progress);
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+
+  const notification = document.getElementsByClassName('acho-notification')[0];
+  const notificationText = notification.getElementsByTagName('p')[0];
+
+  notificationText.innerHTML = "You are at: " + request.tabTitle;
+
+  // notification.style.display = 'flex';
+
+  // setTimeout(function () {
+
+  //   notification.style.display = 'none';
+  // }, 5000);
+
+  const progress = document.getElementsByClassName('progress_bar')[0];
+  progress.style.display = 'flex';
+
+
+  return true;
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+
+  const character = document.getElementsByClassName("character")[0];
+  character.classList.toggle("move");
+
+  return true;
+});

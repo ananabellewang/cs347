@@ -1,17 +1,36 @@
-div {
+/* .progress {
     height: 100%;
     position: absolute;
     left: 0;
     top: 0;
 }
 
-.bar {
+.progress_bar {
     height: 100%;
+    position: absolute;
     width: 20px;
 }
 
-.indicator {
+.progress_cur {
     height: 20px;
     width: 40px;
     margin-left: 20px;
+} */
+
+.progress {
+    width: 500px;
+    border: 1px solid black;
+    position: relative;
+    padding: 3px;
+}
+
+.percent {
+    position: absolute;
+    left: 50%;
+}
+
+.bar {
+    height: 20px;
+    background-color: green;
+    width: 30%;
 }
