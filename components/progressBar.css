@@ -1,0 +1,17 @@
+div {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.bar {
+    height: 100%;
+    width: 20px;
+}
+
+.indicator {
+    height: 20px;
+    width: 40px;
+    margin-left: 20px;
+}
