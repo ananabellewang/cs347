@@ -14,7 +14,7 @@
     flex-direction: column;
     font-family: Karla;
     color: #222;
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 .timer_text_container_title {
