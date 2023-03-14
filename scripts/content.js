@@ -31,7 +31,7 @@ document.body.appendChild(notification);
 // Progress Bar !!!
 const progress = document.createElement("div")
 // progress.style.backgroundImage = `url("${chrome.runtime.getURL('assets/wood.png')}");`
-progress.style.backgroundImage = url(chrome.runtime.getURL('assets/wood.png'));
+// progress.style.backgroundImage = url(chrome.runtime.getURL('assets/wood.png'));
 progress.className = "progress_bar";
 // banana
 const goal = document.createElement("img")

@@ -29,30 +29,24 @@ class Timer {
         });
 
         this.el.add.addEventListener("click", (e) => {
+            this.el.minutes.value = (parseInt(this.el.minutes.value) + 1).toString().padStart(2, "0");
+            if (this.el.minutes.value >= 60) {
+                this.el.minutes.value = "0".padStart(2, "0");;
+                this.el.hours.value = (parseInt(this.el.hours.value) + 1).toString().padStart(2, "0");
+            }
             this.remainingSeconds += 60;
         });
 
-        elementsArray.forEach(function (input) {
-            input.addEventListener("input", (e) => {
-                this.el.subtitle.textContent = e.target.value;
-
-                if (e.target.value.length > 2) {
-                    return false;
-                }
-            });
+        this.el.reset.addEventListener("click", () => {
+            // if (this.interval !== null) {
+            this.stop();
+            this.el.hours.value = "";
+            this.el.minutes.value = "";
+            this.el.seconds.value = "";
+            // }
+            this.el.title.textContent = this.remainingSeconds;
+            this.el.subtitle.textContent = this.el.hours.value + ":" + this.el.minutes.value + ":" + this.el.seconds.value;
         });
-
-        // this.el.reset.addEventListener("click", () => {
-        //     // TODO: Allow hours
-        //     // TODO: better input
-        //     const inputMinutes = prompt("Enter number of minutes:");
-
-        //     if (inputMinutes < 60) {
-        //         this.stop();
-        //         this.remainingSeconds = inputMinutes * 60;
-        //         this.updateInterfaceTime();
-        //     }
-        // });
     }
 
 
@@ -163,11 +157,11 @@ class Timer {
                 <button type="button" class="timer_btn timer_btn_add">
                     +1 minute
                 </button>
-                <button type="button" class="timer_btn timer_btn_control timer_btn_play">
-                    <span class="material-icons">play_arrow</span>
-                </button>
                 <button type="button" class="timer_btn timer_btn_set">
-                    <span class="material-icons">settings</span>
+                    <span class="material-icons">stop</span>
+                </button>
+                <button type="button" class="timer_btn timer_btn_control timer_btn_play">
+                <span class="material-icons">play_arrow</span>
                 </button>
             </div>
         `;
