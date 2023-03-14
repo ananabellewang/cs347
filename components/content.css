@@ -2,15 +2,13 @@
     height: 100%;
     width: 20px;
     position: fixed;
-    top: 0px;
-    left: 0px;
-    background-color: goldenrod;
     display: none;
     flex-direction: column;
     z-index: 7;
+    background-repeat: repeat-y;
 }
 
-.bell {
+.goal {
     font-size: 20px;
     margin-left: 10px;
     z-index: 1;
@@ -21,7 +19,8 @@
     position: fixed;
     top: 15px;
     left: 20px;
-    font-size: 40px;
+    width: 32px;
+    height: 32px;
     /* background-color: transparent; */
     border: none;
     filter: drop-shadow(4px 4px 4px #59597d);

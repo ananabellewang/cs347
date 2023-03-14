@@ -30,17 +30,22 @@ document.body.appendChild(notification);
 
 // Progress Bar !!!
 const progress = document.createElement("div")
+// progress.style.backgroundImage = `url("${chrome.runtime.getURL('assets/wood.png')}");`
+progress.style.backgroundImage = url(chrome.runtime.getURL('assets/wood.png'));
 progress.className = "progress_bar";
-// bell
-const bell = document.createElement("div")
-bell.className = "bell";
-bell.textContent = "🔔"
-progress.appendChild(bell);
+// banana
+const goal = document.createElement("img")
+goal.src = chrome.runtime.getURL("assets/banana.png");
+progress.appendChild(goal);
 
-// climber
-const character = document.createElement("div")
+// monkey
+const character = document.createElement("img")
 character.className = "character";
-character.textContent = "🧗"
+character.src = chrome.runtime.getURL("assets/monkey_64px.png");
+progress.appendChild(character);
+// const character = document.createElement("div")
+// character.className = "character";
+// character.textContent = "🧗"
 // const character = document.createElement("img")
 // character.src = chrome.runtime.getURL("assets/person-climbing.png");
 character.addEventListener('click', function () {
