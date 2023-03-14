@@ -1,70 +1,111 @@
-body {
-    background: #E0E5EC;
-    margin: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0px;
-}
-
 .timer {
     font-family: sans-serif;
     display: inline-block;
     padding: 24px 32px;
-    border-radius: 8px;
-    border-top: 2px solid rgba(255, 255, 255, .5);
-    border-left: 2px solid rgba(255, 255, 255, .5);
-    background: #E0E5EC;
-    /* filter:
-        drop-shadow(-4px -4px 8px #ffffff) drop-shadow(4px 4px 8px #A3B1C6); */
-    box-shadow: 4px 4px 8px 0 #A3B1C6, -4px -4px 8px 0 #ffffff;
+    background: white;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 8px;
+    align-items: stretch;
+    gap: 16px;
 }
 
 .timer_text_container {
     display: flex;
+    flex-direction: column;
+    font-family: Karla;
+    color: #222;
+    border: 1px solid red;
+}
+
+.timer_text_container_title {
+    font-size: 16px;
+}
+
+.timer_text_container_subtitle {
+    font-size: 12px;
+}
+
+.timer_label {
+    font-family: Karla;
+    color: #555;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    /* padding: 8px 24px; */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: .05rem;
+}
+
+.timer_input {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #555;
+}
+
+/* controls the colons */
+.timer_input_container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    padding: 0px;
+    /* color: #ddd; */
 }
 
 .timer_text {
-    font-size: 36px;
+    font-family: "Orbitron";
     font-weight: bold;
-    color: #515761;
-    /* color: #808b9a; */
+    font-size: 36px;
+    color: #222;
+}
+
+input {
+    color: #222;
+    border: solid 1px #ddd;
+    border-radius: 8px;
+    font-family: "Orbitron";
+    font-size: 36px;
+    padding: 4px 8px;
 }
 
 .timer_btn_container {
     display: flex;
     justify-content: center;
     gap: 12px;
-    /* background-color: goldenrod; */
 }
 
 .timer_btn {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
+    color: #222;
+    background-color: transparent;
     border-radius: 50%;
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, .5);
-    /* color: white; */
-    color: #808b9a;
-    /* background: #808b9a; */
-    background: #E0E5EC;
+    border: 1px solid #222;
     cursor: pointer;
-    box-shadow: 4px 4px 8px 0 rgba(163, 177, 198, 0.8), -4px -4px 8px 0 rgba(255, 255, 255, 0.8);
 }
 
 .timer_btn_play {
-    background: #E0E5EC;
-    /* background: #00b84c; */
-    /* background: #1a9d32; */
+    color: white;
+    background-color: blue;
+    border: blue;
 }
 
 .timer_btn_pause {
-    background: #E0E5EC;
-    /* border: none; */
-    box-shadow: inset 4px 4px 8px 0 rgba(163, 177, 198, 0.8), inset -4px -4px 8px 0 rgba(255, 255, 255, 0.8);
-    /* background: #c51c54; */
+    color: #222;
+    background-color: transparent;
+    /* background: #E0E5EC; */
+    /* box-shadow: inset 4px 4px 8px 0 rgba(163, 177, 198, 0.8), inset -4px -4px 8px 0 rgba(255, 255, 255, 0.8); */
+}
+
+.timer_btn_add {
+    width: auto;
+    height: auto;
+    flex-grow: 1;
+    border-radius: 8px;
+    padding: 0px 16px;
+    font-size: 16px;
 }

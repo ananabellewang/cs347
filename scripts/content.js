@@ -42,7 +42,7 @@ const character = document.createElement("div")
 character.className = "character";
 character.textContent = "🧗"
 // const character = document.createElement("img")
-// character.src = chrome.runtime.getURL("images/person-climbing.png");
+// character.src = chrome.runtime.getURL("assets/person-climbing.png");
 character.addEventListener('click', function () {
   character.classList.toggle("move");
 });
