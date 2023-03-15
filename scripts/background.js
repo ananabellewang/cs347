@@ -1,72 +1,47 @@
-let remainingSeconds;
-let totalSeconds;
+let remainingSeconds = 0;
+let totalSeconds = 0;
 let timerInterval;
 let running = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.cmd === 'START_TIME') {
-        // timerID = setTimeout(() => {
-        //     // the time is app, alert the user.
-        //     // sendResponse({ msg: "TIMES_UP" });
-        //     remainingSeconds = 0;
-        //     chrome.tabs.create({ url: "hello.html" });
-        //     // audio not workin g...barkTitle.
-        //     const soundEffect = new Audio("assets/bell.wav");
-        //     soundEffect.play();
-        // }, remainingSeconds * 1000);
-        if (remainingSeconds == 0) {
-            stop();
-        }
+    if (request.cmd === 'PLAY_TIME') {
         running = true;
         timerInterval = setInterval(() => {
             remainingSeconds--;
-            chrome.runtime.sendMessage({ cmd: "UPDATE_TIME", remaining: remainingSeconds });
-            // console.log(response);
-            // (async () => {
-            //     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-            //     const response = await chrome.tabs.sendMessage(tab.id, { remaining: remainingSeconds });
-            //     // do something with response here, not outside the function
-            //     console.log(response);
-            // })();
-
             // when timer stops!
             if (remainingSeconds == 0) {
-                // alert("Time's up!");
-                console.log("Time's Up!")
-                clearInterval(timerInterval);
-                timerInterval = null;
-
-                // send a message letting them know to reset
-                // (async () => {
-                //     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-                //     chrome.tabs.sendMessage(tab.id, { cmd: "END_TIME" });
-                // })();
-                return;
+                end();
             }
         }, 1000);
-    } else if (request.cmd === 'GET_TIME') {
-        sendResponse({ remaining: remainingSeconds });
+    } else if (request.cmd === "GET_TIME") {
+        sendResponse({ running: running, remaining: remainingSeconds, total: totalSeconds });
+        console.log("GET_TIME - remaining: " + remainingSeconds + ", total: " + totalSeconds, ", running: " + running);
     } else if (request.cmd === 'UPDATE_TIME') {
         if (request.remaining) remainingSeconds = request.remaining;
         if (request.total) totalSeconds = request.total;
-        running = false;
+        console.log("UPDATE_TIME - remaining: " + remainingSeconds + ", total: " + totalSeconds);
     } else if (request.cmd === 'PAUSE_TIME') {
-        if (request.total) totalSeconds = request.total;
-        running = false;
-        clearInterval(timerInterval);
-        timerInterval = null;
+        pause();
+        console.log("PAUSE_TIME - remaining: " + remainingSeconds + ", total: " + totalSeconds, ", running: " + running);
     } else if (request.cmd === 'STOP_TIME') {
-        if (request.total) totalSeconds = request.total;
-        running = false;
-        clearInterval(timerInterval);
-        timerInterval = null;
+        end();
+        console.log("STOP_TIME - remaining: " + remainingSeconds + ", total: " + totalSeconds, ", running: " + running);
     }
 });
 
-function stop() {
+function pause() {
     running = false;
     clearInterval(timerInterval);
     timerInterval = null;
+}
+
+function end() {
+    pause();
+    running = false;
+    remainingSeconds = 0;
+    totalSeconds = 0;
+    // chrome.runtime.sendMessage({ cmd: "END_TIME" });
+    console.log("time's up! (from end.js)");
 }
 
 chrome.commands.onCommand.addListener(function (command) {

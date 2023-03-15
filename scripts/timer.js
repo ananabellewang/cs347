@@ -20,10 +20,12 @@ class Timer {
         this.interval = null;
         this.remainingSeconds = 0;
         this.totalSeconds = 0;
-        this.running = true;
+        this.running = false;
+
+        this.count = 0;
 
         this.el.control.addEventListener("click", () => {
-            if (!this.running) {
+            if (this.running == false) {
                 this.play()
             } else {
                 this.pause();
@@ -31,44 +33,67 @@ class Timer {
         });
 
         this.el.add.addEventListener("click", (e) => {
-            this.el.minutes.value = (parseInt(this.el.minutes.value) + 1).toString().padStart(2, "0");
-            if (this.el.minutes.value >= 60) {
-                this.el.minutes.value = "0".padStart(2, "0");;
-                this.el.hours.value = (parseInt(this.el.hours.value) + 1).toString().padStart(2, "0");
-            }
             this.remainingSeconds += 60;
-            chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds });
+            (async () => {
+                await chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds });
+                this.updateInterfaceTime();
+            })();
+
+            // this.el.minutes.value = (parseInt(this.el.minutes.value) + 1).toString().padStart(2, "0");
+            // if (this.el.minutes.value >= 60) {
+            //     this.el.minutes.value = "0".padStart(2, "0");;
+            //     this.el.hours.value = (parseInt(this.el.hours.value) + 1).toString().padStart(2, "0");
+            // }
+            // this.remainingSeconds += 60;
         });
 
         this.el.reset.addEventListener("click", () => {
-            this.stop();
-            this.el.hours.value = "";
-            this.el.minutes.value = "";
-            this.el.seconds.value = "";
-            // this.el.title.textContent = this.remainingSeconds;
+            this.end();
+            // this.end();
+            // this.el.hours.value = "";
+            // this.el.minutes.value = "";
+            // this.el.seconds.value = "";
+            // this.remainingSeconds = 0;
+            // this.totalSeconds = 0;
+            // this.runnimg = false;
+            // chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
+            //     if (response.remaining !== undefined) this.remainingSeconds = response.remaining;
+            //     if (response.total !== undefined) this.totalSeconds = response.total;
+            //     if (response.running !== undefined) this.running = response.running;
+            // });
         });
 
-        // Call this when the pop-up is shown
+        // Call this when the pop - up is shown
         chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
-            if (response.remaining) {
-                this.remainingSeconds = response.remaining;
-                // not necessarily start ...
-                this.start();
-            }
+            if (response.remaining !== undefined) this.remainingSeconds = response.remaining;
+            if (response.total !== undefined) this.totalSeconds = response.total;
+            if (response.running !== undefined) this.running = response.running;
+            this.updateInterfaceControls();
+            if (this.running !== false) this.start();
         });
 
         chrome.runtime.onMessage.addListener(
             function (request, sender, sendResponse) {
-                console.log(sender.tab ?
-                    "from a content script:" + sender.tab.url :
-                    "from the extension");
-                if (request.cmd === "UPDATE_TIME" && request.remaining) {
-                    this.remainingSeconds = request.remaining;
-                    if (this.remainingSeconds == 0) {
-                        this.handleTimerEnd();
-                    }
-                    return true;
-                }
+                // console.log(sender.tab ?
+                //     "from a content script:" + sender.tab.url :
+                //     "from the extension");
+                // if (request.cmd === "CURRENT_TIME") {
+                //     this.remainingSeconds = request.remaining;
+                //     this.totalSeconds = request.total;
+                //     this.start();
+                //     this.count += 1;
+                //     this.el.subtitle.textContent = this.count;
+
+                //     // if (this.remainingSeconds == 0) {
+                //     //     this.handleTimerEnd();
+                //     // }
+                // }
+                // if (request.cmd === "END_TIME") {
+                //     // this.handleTimerEnd();
+                //     // console.log("stop!!!");
+                //     this.el.subtitle.textContent = "Timer stopped!";
+                //     return true;
+                // }
             }
         );
     }
@@ -91,7 +116,7 @@ class Timer {
     }
 
     updateInterfaceControls() {
-        if (!this.running) {
+        if (this.running === false) {
             this.el.control.innerHTML = `<span class="material-icons">play_arrow</span>`;
             this.el.control.classList.add("timer_btn_play");
             this.el.control.classList.remove("timer_btn_pause");
@@ -104,62 +129,112 @@ class Timer {
 
     play() {
         // update seconds based on input
+        // chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
+        //     if (response.remaining !== undefined && response.remaining != 0) {
+        //         this.remainingSeconds = response.remaining;
+        //         this.totalSeconds = 10;
+        //     } else {
+        //         this.setRemainingSeconds();
+        //         this.totalSeconds = 420;
+        //         chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds, total: this.totalSeconds });
+        //     }
+        // });
         this.setRemainingSeconds();
-        chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds, total: this.remainingSeconds });
-
-        if (this.remainingSeconds == 0) return;
-        chrome.runtime.sendMessage({ cmd: 'START_TIME' });
-        this.start();
+        this.totalSeconds = this.remainingSeconds;
+        (async () => {
+            await chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds, total: this.totalSeconds });
+            if (this.remainingSeconds == 0) return;
+            await chrome.runtime.sendMessage({ cmd: 'PLAY_TIME' });
+            this.start();
+        })();
     }
 
+    // doesn't work on popup close
+    // resets the total count on play()
     pause() {
-        chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds });
-        chrome.runtime.sendMessage({ cmd: 'STOP_TIME' });
-        this.stop();
+        // chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds });
+        // chrome.runtime.sendMessage({ cmd: 'PAUSE_TIME' });
+        // (async () => {
+        //     await chrome.runtime.sendMessage({ cmd: 'PAUSE_TIME' });
+        //     this.stop();
+        // })();
+        (async () => {
+            this.stop();
+            await chrome.runtime.sendMessage({ cmd: 'PAUSE_TIME' });
+            // await chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
+            //     if (response.remaining !== undefined) this.remainingSeconds = response.remaining;
+            //     if (response.total !== undefined) this.totalSeconds = response.total;
+            //     if (response.running !== undefined) this.running = response.running;
+            // });
+            this.updateInterfaceTime();
+            this.running = false;
+            this.updateInterfaceControls();
+            this.el.title.textContent = this.remainingSeconds;
+            this.el.subtitle.textContent = this.totalSeconds;
+        })();
     }
     // generic start
     start() {
+        this.running = true;
         this.el.timer_display.disabled = true;
-        // this.el.title.textContent = this.remainingSeconds;
+        this.el.title.textContent = this.remainingSeconds;
+        this.el.subtitle.textContent = this.totalSeconds;
         this.updateInterfaceTime();
         this.updateInterfaceControls();
 
         // instead of setting interval, maybe get the remaining seconds from the background???
-
-        // this.interval = setInterval(() => {
-        //     // this.remainingSeconds--;
-        //     // chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
-        //     //     if (response.remaining) {
-        //     //         this.remainingSeconds = response.remaining;
-        //     //         this.el.subtitle.textContent = response.remaining;
-        //     //     }
-        //     // });
-        //     this.updateInterfaceTime();
-        //     this.el.title.textContent = this.remainingSeconds;
-        //     // this.el.subtitle.textContent = this.el.hours.value + ":" + this.el.minutes.value + ":" + this.el.seconds.value;
-
-        //     // when timer stops!
-        //     // if (this.remainingSeconds == 0) {
-        //     //     // chrome.runtime.sendMessage({ cmd: 'STOP_TIME' });
-        //     //     this.handleTimerEnd();
-        //     //     return;
-        //     // }
-        // }, 1);
-        // this.updateInterfaceControls();
+        this.interval = setInterval(() => {
+            // this.remainingSeconds--;
+            // get remaining seconds
+            (async () => {
+                chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
+                    this.count += 1
+                    if (response.remaining !== undefined) {
+                        this.remainingSeconds = response.remaining;
+                        this.updateInterfaceTime();
+                        // when timer stops!
+                        if (this.remainingSeconds == 0) {
+                            this.end();
+                            const soundEffect = new Audio("assets/monkey!.m4a");
+                            soundEffect.play();
+                            return;
+                        }
+                    }
+                    this.el.title.textContent = this.remainingSeconds;
+                    this.el.subtitle.textContent = this.totalSeconds;
+                });
+            })();
+        }, 1);
+        this.updateInterfaceControls();
     }
 
-
     stop() {
-
-        // display is the single source of truth
-        this.remainingSeconds = 0;
-
-        this.el.timer_display.disabled = false;
         clearInterval(this.interval);
         this.interval = null;
         this.updateInterfaceControls();
+        this.el.timer_display.disabled = false;
+    }
 
-        // this.el.title.textContent = this.remainingSeconds;
+    end() {
+        (async () => {
+            this.stop();
+            await chrome.runtime.sendMessage({ cmd: 'STOP_TIME' });
+            this.remainingSeconds = 0;
+            this.totalSeconds = 0;
+            this.runnimg = false;
+            this.updateInterfaceTime();
+            this.el.title.textContent = this.remainingSeconds;
+            this.el.subtitle.textContent = this.totalSeconds;
+        })();
+    }
+
+    getAndUpdateTime() {
+        chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
+            if (response.remaining !== undefined) this.remainingSeconds = response.remaining;
+            if (response.total !== undefined) this.totalSeconds = response.total;
+            if (response.running !== undefined) this.running = response.running;
+        });
+        this.updateInterfaceTime();
     }
 
     setRemainingSeconds() {
@@ -169,13 +244,6 @@ class Timer {
         console.log('hrs: %s, min: %s, sec: %s', hours, minutes, seconds);
 
         this.remainingSeconds = (hours * 3600) + (minutes * 60) + seconds;
-    }
-
-    handleTimerEnd() {
-        this.remainingSeconds = 0;
-        this.stop();
-        const soundEffect = new Audio("assets/bell.wav");
-        soundEffect.play();
     }
 
     //     <div class="timer_text_container">
