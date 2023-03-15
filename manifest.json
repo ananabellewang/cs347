@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "BananaNab",
+  "name": "Focus Timer",
   "version": "1.0",
   "description": "CS 347 project",
   "action": {
@@ -41,17 +41,19 @@
     }
   ],
   "commands": {
-    "bark": {
+    "show": {
       "suggested_key": {
-        "default": "Shift+Ctrl+X"
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
       },
-      "description": "Show!"
+      "description": "Show! Or hide!"
     },
     "move": {
       "suggested_key": {
-        "default": "Shift+Alt+C"
+        "default": "Ctrl+Shift+M",
+        "mac": "Command+Shift+M"
       },
-      "description": "Climb!"
+      "description": "Move!"
     }
   },
   "web_accessible_resources": [

@@ -71,31 +71,6 @@ class Timer {
             this.updateInterfaceControls();
             if (this.running !== false) this.start();
         });
-
-        chrome.runtime.onMessage.addListener(
-            function (request, sender, sendResponse) {
-                // console.log(sender.tab ?
-                //     "from a content script:" + sender.tab.url :
-                //     "from the extension");
-                // if (request.cmd === "CURRENT_TIME") {
-                //     this.remainingSeconds = request.remaining;
-                //     this.totalSeconds = request.total;
-                //     this.start();
-                //     this.count += 1;
-                //     this.el.subtitle.textContent = this.count;
-
-                //     // if (this.remainingSeconds == 0) {
-                //     //     this.handleTimerEnd();
-                //     // }
-                // }
-                // if (request.cmd === "END_TIME") {
-                //     // this.handleTimerEnd();
-                //     // console.log("stop!!!");
-                //     this.el.subtitle.textContent = "Timer stopped!";
-                //     return true;
-                // }
-            }
-        );
     }
 
 
@@ -195,8 +170,8 @@ class Timer {
                         // when timer stops!
                         if (this.remainingSeconds == 0) {
                             this.end();
-                            const soundEffect = new Audio("assets/monkey!.m4a");
-                            soundEffect.play();
+                            // const soundEffect = new Audio("assets/monkey!.m4a");
+                            // soundEffect.play();
                             return;
                         }
                     }

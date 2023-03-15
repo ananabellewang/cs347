@@ -56,3 +56,7 @@
 .acho-notification>img {
     margin-right: 12px;
 }
+
+.show {
+    display: flex;
+}

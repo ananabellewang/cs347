@@ -42,35 +42,42 @@ function end() {
     totalSeconds = 0;
     // chrome.runtime.sendMessage({ cmd: "END_TIME" });
     console.log("time's up! (from end.js)");
+
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+            cmd: "END_TIMER",
+        });
+    });
+    return true;
 }
 
 chrome.commands.onCommand.addListener(function (command) {
     switch (command) {
-        case 'bark':
-            barkTitle();
+        case 'show':
+            showHide();
             break;
         case "move":
-            handleMove();
+            move();
             break;
         default:
             console.log(`Command ${command} not found`);
     }
 });
 
-function barkTitle() {
+function showHide() {
     const query = { active: true, currentWindow: true };
     chrome.tabs.query(query, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, {
-            tabTitle: tabs[0].title
+            cmd: "SHOW_HIDE"
         });
     });
 }
 
-function handleMove() {
+function move() {
     const query = { active: true, currentWindow: true };
     chrome.tabs.query(query, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, {
-            tabTitle: tabs[0].title
+            cmd: "MOVE"
         });
     });
 }
