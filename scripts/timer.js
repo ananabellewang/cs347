@@ -19,12 +19,14 @@ class Timer {
 
         this.interval = null;
         this.remainingSeconds = 0;
+        this.totalSeconds = 0;
+        this.running = true;
 
         this.el.control.addEventListener("click", () => {
-            if (this.interval === null) {
-                this.start();
+            if (!this.running) {
+                this.play()
             } else {
-                this.stop();
+                this.pause();
             }
         });
 
@@ -35,33 +37,61 @@ class Timer {
                 this.el.hours.value = (parseInt(this.el.hours.value) + 1).toString().padStart(2, "0");
             }
             this.remainingSeconds += 60;
+            chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds });
         });
 
         this.el.reset.addEventListener("click", () => {
-            // if (this.interval !== null) {
             this.stop();
             this.el.hours.value = "";
             this.el.minutes.value = "";
             this.el.seconds.value = "";
-            // }
-            this.el.title.textContent = this.remainingSeconds;
-            this.el.subtitle.textContent = this.el.hours.value + ":" + this.el.minutes.value + ":" + this.el.seconds.value;
+            // this.el.title.textContent = this.remainingSeconds;
         });
+
+        // Call this when the pop-up is shown
+        chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
+            if (response.remaining) {
+                this.remainingSeconds = response.remaining;
+                // not necessarily start ...
+                this.start();
+            }
+        });
+
+        chrome.runtime.onMessage.addListener(
+            function (request, sender, sendResponse) {
+                console.log(sender.tab ?
+                    "from a content script:" + sender.tab.url :
+                    "from the extension");
+                if (request.cmd === "UPDATE_TIME" && request.remaining) {
+                    this.remainingSeconds = request.remaining;
+                    if (this.remainingSeconds == 0) {
+                        this.handleTimerEnd();
+                    }
+                    return true;
+                }
+            }
+        );
     }
 
 
     updateInterfaceTime() {
-        const hours = Math.floor(this.remainingSeconds / 3600);
-        const minutes = Math.floor((this.remainingSeconds % 3600) / 60);
-        const seconds = this.remainingSeconds % 60;
+        if (this.remainingSeconds == 0) {
+            this.el.hours.value = "";
+            this.el.minutes.value = "";
+            this.el.seconds.value = "";
+        } else {
+            const hours = Math.floor(this.remainingSeconds / 3600);
+            const minutes = Math.floor((this.remainingSeconds % 3600) / 60);
+            const seconds = this.remainingSeconds % 60;
 
-        this.el.hours.value = hours.toString().padStart(2, "0");
-        this.el.minutes.value = minutes.toString().padStart(2, "0");
-        this.el.seconds.value = seconds.toString().padStart(2, "0");
+            this.el.hours.value = hours.toString().padStart(2, "0");
+            this.el.minutes.value = minutes.toString().padStart(2, "0");
+            this.el.seconds.value = seconds.toString().padStart(2, "0");
+        }
     }
 
     updateInterfaceControls() {
-        if (this.interval === null) {
+        if (!this.running) {
             this.el.control.innerHTML = `<span class="material-icons">play_arrow</span>`;
             this.el.control.classList.add("timer_btn_play");
             this.el.control.classList.remove("timer_btn_pause");
@@ -72,32 +102,55 @@ class Timer {
         }
     }
 
-    start() {
-        // check if inputted duration is nonzero
+    play() {
+        // update seconds based on input
         this.setRemainingSeconds();
+        chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds, total: this.remainingSeconds });
+
         if (this.remainingSeconds == 0) return;
-
-        this.el.title.textContent = this.remainingSeconds;
-        this.el.subtitle.textContent = this.el.hours.value + ":" + this.el.minutes.value + ":" + this.el.seconds.value;
-        this.el.timer_display.disabled = true;
-        this.updateInterfaceTime();
-
-        this.interval = setInterval(() => {
-            this.remainingSeconds--;
-            this.updateInterfaceTime();
-            this.el.title.textContent = this.remainingSeconds;
-            this.el.subtitle.textContent = this.el.hours.value + ":" + this.el.minutes.value + ":" + this.el.seconds.value;
-
-            // when timer stops!
-            if (this.remainingSeconds === 0) {
-                this.handleTimerEnd();
-            }
-        }, 1000);
-
-        this.updateInterfaceControls();
+        chrome.runtime.sendMessage({ cmd: 'START_TIME' });
+        this.start();
     }
 
+    pause() {
+        chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds });
+        chrome.runtime.sendMessage({ cmd: 'STOP_TIME' });
+        this.stop();
+    }
+    // generic start
+    start() {
+        this.el.timer_display.disabled = true;
+        // this.el.title.textContent = this.remainingSeconds;
+        this.updateInterfaceTime();
+        this.updateInterfaceControls();
+
+        // instead of setting interval, maybe get the remaining seconds from the background???
+
+        // this.interval = setInterval(() => {
+        //     // this.remainingSeconds--;
+        //     // chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
+        //     //     if (response.remaining) {
+        //     //         this.remainingSeconds = response.remaining;
+        //     //         this.el.subtitle.textContent = response.remaining;
+        //     //     }
+        //     // });
+        //     this.updateInterfaceTime();
+        //     this.el.title.textContent = this.remainingSeconds;
+        //     // this.el.subtitle.textContent = this.el.hours.value + ":" + this.el.minutes.value + ":" + this.el.seconds.value;
+
+        //     // when timer stops!
+        //     // if (this.remainingSeconds == 0) {
+        //     //     // chrome.runtime.sendMessage({ cmd: 'STOP_TIME' });
+        //     //     this.handleTimerEnd();
+        //     //     return;
+        //     // }
+        // }, 1);
+        // this.updateInterfaceControls();
+    }
+
+
     stop() {
+
         // display is the single source of truth
         this.remainingSeconds = 0;
 
@@ -106,8 +159,7 @@ class Timer {
         this.interval = null;
         this.updateInterfaceControls();
 
-        this.el.title.textContent = this.remainingSeconds;
-        this.el.subtitle.textContent = this.el.hours.value + ":" + this.el.minutes.value + ":" + this.el.seconds.value;
+        // this.el.title.textContent = this.remainingSeconds;
     }
 
     setRemainingSeconds() {
@@ -120,6 +172,7 @@ class Timer {
     }
 
     handleTimerEnd() {
+        this.remainingSeconds = 0;
         this.stop();
         const soundEffect = new Audio("assets/bell.wav");
         soundEffect.play();
@@ -134,8 +187,10 @@ class Timer {
     static getHTML() {
         return `
             <div class="timer_text_container">
-                <span class="timer_text_container_title">Title</span>
-                <span class="timer_text_container_subtitle">Title</span>
+                <span class="timer_text_container_title">BananaNab</span>
+                <span class="timer_text_container_subtitle">
+                    Boomba the monkey is hungry! Help her climb the tall tree and reach the banana while you complete your to-dos.
+                </span>
             </div>
             <div class="timer_input">
                 <div class="timer_label">
@@ -163,6 +218,11 @@ class Timer {
                 <button type="button" class="timer_btn timer_btn_control timer_btn_play">
                 <span class="material-icons">play_arrow</span>
                 </button>
+            </div>
+            <div class="sprite_container">
+                <img src="assets/banana.png" alt="banana" class="sprite">
+                ❤️
+                <img src="assets/monkey.png" alt="monkey" class="sprite">
             </div>
         `;
     }

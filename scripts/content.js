@@ -29,9 +29,10 @@ notification.appendChild(notificationText);
 document.body.appendChild(notification);
 
 // Progress Bar !!!
-const progress = document.createElement("div")
-// progress.style.backgroundImage = `url("${chrome.runtime.getURL('assets/wood.png')}");`
-// progress.style.backgroundImage = url(chrome.runtime.getURL('assets/wood.png'));
+// const progress = document.createElement("div")
+// progress.className = "progress_bar";
+const progress = document.createElement("img")
+progress.src = chrome.runtime.getURL("assets/longwood.png");
 progress.className = "progress_bar";
 // banana
 const goal = document.createElement("img")
@@ -41,7 +42,7 @@ progress.appendChild(goal);
 // monkey
 const character = document.createElement("img")
 character.className = "character";
-character.src = chrome.runtime.getURL("assets/monkey_64px.png");
+character.src = chrome.runtime.getURL("assets/monkey.png");
 progress.appendChild(character);
 // const character = document.createElement("div")
 // character.className = "character";

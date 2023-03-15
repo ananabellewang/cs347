@@ -20,7 +20,8 @@
   },
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "tabs"
   ],
   "background": {
     "service_worker": "scripts/background.js"
@@ -42,7 +43,7 @@
   "commands": {
     "bark": {
       "suggested_key": {
-        "default": "Shift+Alt+X"
+        "default": "Shift+Ctrl+X"
       },
       "description": "Show!"
     },
