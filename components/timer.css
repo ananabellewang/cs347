@@ -20,11 +20,13 @@
     flex-direction: column;
     font-family: Karla;
     color: #222;
+    gap: 4px;
     /* border: 1px solid red; */
 }
 
 .timer_text_container_title {
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .timer_text_container_subtitle {
