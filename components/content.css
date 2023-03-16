@@ -44,7 +44,7 @@
 
 .rotate_character {
     transform: rotate(-90deg);
-    margin-left: 4px;
+    /* margin-left: 10px; */
 }
 
 .move {
