@@ -9,7 +9,7 @@
     align-items: flex-end;
     z-index: 9999999999999999999;
     background-repeat: repeat-y;
-    gap: 4px;
+    gap: 0px;
     filter: drop-shadow(1px 1px 0 black) drop-shadow(1px -1px 0 black) drop-shadow(-1px 1px 0 black) drop-shadow(-1px -1px 0 black);
 }
 
@@ -24,7 +24,7 @@
 }
 
 .goal {
-    margin: 12px 0px 0px 0px;
+    margin: 16px 0px 0px 0px;
     object-fit: contain;
     width: 20px;
     height: 20px;
