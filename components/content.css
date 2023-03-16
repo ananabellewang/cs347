@@ -6,11 +6,17 @@
     left: 0px;
     display: none;
     flex-direction: column;
-    z-index: 7;
+    align-items: flex-end;
+    z-index: 9999999999999999999;
     background-repeat: repeat-y;
-    background-color: transparent;
-    gap: 8px;
-    padding-top: 8px;
+    gap: 4px;
+    filter: drop-shadow(1px 1px 0 black) drop-shadow(1px -1px 0 black) drop-shadow(-1px 1px 0 black) drop-shadow(-1px -1px 0 black);
+
+}
+
+.border {
+    -webkit-filter: drop-shadow(1px 1px 0 white) drop-shadow(1px -1px 0 white) drop-shadow(-1px 1px 0 white) drop-shadow(-1px -1px 0 white);
+    filter: drop-shadow(1px 1px 0 white) drop-shadow(1px -1px 0 white) drop-shadow(-1px 1px 0 white) drop-shadow(-1px -1px 0 white);
 }
 
 .bar {
@@ -19,50 +25,51 @@
 }
 
 .goal {
+    margin: 12px 0px 0px 0px;
+    object-fit: contain;
     width: 20px;
     height: 20px;
-    /* filter: drop-shadow(0px 0px 2px white) drop-shadow(0px 0px 8px yellow); */
-    filter: drop-shadow(0px 0px 4px #ddd);
+    /* filter: drop-shadow(0px 0px 1px white) drop-shadow(0px 0px 8px yellow); */
 }
 
 .character {
     position: fixed;
-    bottom: 0px;
+    bottom: 0%;
     left: 20px;
-    width: 40px;
-    height: 40px;
-    /* background-color: transparent; */
+    object-fit: contain;
+    width: 32px;
+    height: 32px;
     border: none;
-    filter: drop-shadow(0px 0px 4px #ddd);
-    transition: all 1s ease;
+    transition: all 1s linear;
 }
 
-.character.move {
-    top: 100%;
-    transform: translate(0, -100%);
+.rotate_character {
+    transform: rotate(-90deg);
+    margin-left: 4px;
 }
 
-
-.acho-notification {
-    background-color: white;
-    border: rgb(242, 105, 77) 1px solid;
-    border-radius: 5px;
-    font-size: medium;
-    width: 320px;
-    display: none;
-    padding: 8px;
-    position: fixed;
-    bottom: 80px;
-    right: 30px;
-    align-items: center;
-    color: black;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-.acho-notification>img {
-    margin-right: 12px;
+.move {
+    bottom: calc(100% - 40px);
+    transition: all 1s linear;
+    /* transform: translate(0, 100%); */
 }
 
 .show {
+    display: flex;
+}
+
+
+.heart {
+    display: none;
+    position: fixed;
+    object-fit: contain;
+    top: 4px;
+    left: 10px;
+    height: 12px;
+    width: 12px;
+    /* padding: 4px; */
+}
+
+.show_heart {
     display: flex;
 }
