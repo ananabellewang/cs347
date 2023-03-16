@@ -1,4 +1,4 @@
-.progress_bar {
+.progress_container {
     height: 100%;
     width: 20px;
     position: fixed;
@@ -8,26 +8,32 @@
     flex-direction: column;
     z-index: 7;
     background-repeat: repeat-y;
-    background-color: goldenrod;
+    background-color: transparent;
+    gap: 8px;
+    padding-top: 8px;
+}
 
+.bar {
+    flex-grow: 1;
+    width: 20px;
 }
 
 .goal {
-    font-size: 20px;
-    margin-left: 10px;
-    z-index: 1;
-    filter: drop-shadow(0px 0px 2px white) drop-shadow(0px 0px 8px yellow);
+    width: 20px;
+    height: 20px;
+    /* filter: drop-shadow(0px 0px 2px white) drop-shadow(0px 0px 8px yellow); */
+    filter: drop-shadow(0px 0px 4px #ddd);
 }
 
 .character {
     position: fixed;
-    top: 15px;
+    bottom: 0px;
     left: 20px;
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     /* background-color: transparent; */
     border: none;
-    filter: drop-shadow(4px 4px 4px #59597d);
+    filter: drop-shadow(0px 0px 4px #ddd);
     transition: all 1s ease;
 }
 
