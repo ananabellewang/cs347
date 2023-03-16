@@ -10,7 +10,7 @@ progress_container.className = "progress_container";
 const goal = document.createElement("img")
 goal.src = chrome.runtime.getURL("assets/banana.png");
 goal.className = "goal";
-goal.classList.add("border");
+goal.classList.add("contrast_border");
 progress_container.appendChild(goal);
 
 // tree
@@ -22,7 +22,7 @@ progress_container.appendChild(bar);
 // monkey
 const character = document.createElement("img")
 character.className = "character";
-character.classList.add("border");
+character.classList.add("contrast_border");
 character.src = chrome.runtime.getURL("assets/monkey.png");
 progress_container.appendChild(character);
 
@@ -30,7 +30,7 @@ progress_container.appendChild(character);
 const heart = document.createElement("img")
 heart.src = chrome.runtime.getURL("assets/heart.png");
 heart.className = "heart";
-heart.classList.add("border");
+heart.classList.add("contrast_border");
 progress_container.appendChild(heart);
 
 

@@ -12,6 +12,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 cmd: "RESET_CHARACTER"
             });
         });
+        // const tab = getCurrentTab();
+        // chrome.tabs.sendMessage(tab.id, {
+        //     cmd: "RESET_CHARACTER"
+        // });
         handleStart();
     } else if (request.cmd === "GET_TIME") {
         handleGet(sendResponse);
@@ -127,14 +131,21 @@ function move() {
     });
 }
 
-chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
-    if (info.url && urlRegex.test(info.url)) {
-        /* The tab with ID `tabId` has been updated to a URL
-         * in the `google.com` domain. Let's do something... */
-        let queryOptions = { active: true, lastFocusedWindow: true };
-        let tabs = chrome.tabs.query(queryOptions);
-        chrome.tabs.sendMessage(tabs[0].id,
-            { cmd: "SHOW" },
-        );
-    }
-});
+// chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
+//     // if (info.url && urlRegex.test(info.url)) {
+//     if (info.url) {
+//         /* The tab with ID `tabId` has been updated to a URL
+//          * in the `google.com` domain. Let's do something... */
+//         // const tab = getCurrentTab();
+//         // chrome.tabs.sendMessage(tab.id,
+//         //     { cmd: "SHOW" },
+//         // );
+//     }
+// });
+
+async function getCurrentTab() {
+    let queryOptions = { active: true, lastFocusedWindow: true };
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
+}
