@@ -44,27 +44,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     if (request.cmd === "SHOW_HIDE") {
         progress_container.classList.toggle("show");
-    } else if (request.cmd == "POPUP_OPENED") {
-        remainingSeconds = request.remainingSeconds;
-        totalSeconds = request.totalSeconds;
+    } else if (request.cmd === "SHOW") {
         progress_container.classList.add("show");
     } else if (request.cmd == "MOVE_CHARACTER") {
         remainingSeconds = request.remainingSeconds;
         totalSeconds = request.totalSeconds;
         const portionDone = (remainingSeconds == 0) ? 1 : (totalSeconds - remainingSeconds) / totalSeconds;
         // console.log("MOVE_CHARACTER - remaining: " + remainingSeconds + ", total: " + totalSeconds, ", portion done: " + portionDone);
-        character.style.bottom = "calc((100% - 34px) * " + portionDone + ")";
+        character.style.bottom = "calc((100% - 35px) * " + portionDone + ")";
     } else if (request.cmd == "MAKE_SOUND") {
         // only play if popup isn't open
         if (document.title != "BananaNab") {
             soundEffect.play();
         }
     } else if (request.cmd == "RESET_CHARACTER") {
-        character.style.bottom = "0%";
+        character.style.bottom = "3px";
         character.classList.remove("rotate_character");
         heart.classList.remove("show_heart");
     } else if (request.cmd == "TIMER_DONE") {
-        character.style.bottom = "calc(100% - 34px)";
+        character.style.bottom = "calc(100% - 35px)";
         character.classList.add("rotate_character");
         heart.classList.add("show_heart");
     }

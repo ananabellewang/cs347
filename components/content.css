@@ -34,7 +34,7 @@
 
 .character {
     position: fixed;
-    bottom: 0%;
+    bottom: 3px;
     left: 20px;
     object-fit: contain;
     width: 32px;

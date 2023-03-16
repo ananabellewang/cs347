@@ -76,10 +76,10 @@ class Timer {
         });
 
         (async () => {
-            let queryOptions = { active: true, currentWindow: true };
+            let queryOptions = { active: true, lastFocusedWindow: true };
             let tabs = await chrome.tabs.query(queryOptions);
             chrome.tabs.sendMessage(tabs[0].id,
-                { cmd: "POPUP_OPENED" },
+                { cmd: "SHOW" },
             );
         })();
     }

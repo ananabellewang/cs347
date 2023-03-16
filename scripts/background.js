@@ -6,7 +6,7 @@ let paused = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.cmd === 'START_TIME') {
-        const query = { active: true, currentWindow: true };
+        const query = { active: true, lastFocusedWindow: true };
         chrome.tabs.query(query, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id, {
                 cmd: "RESET_CHARACTER"
@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         handleGet(sendResponse);
     } else if (request.cmd === 'UPDATE_TIME') {
         handleUpdate(request);
-        const query = { active: true, currentWindow: true };
+        const query = { active: true, lastFocusedWindow: true };
         chrome.tabs.query(query, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id, {
                 cmd: "MOVE_CHARACTER",
@@ -30,7 +30,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } else if (request.cmd === 'STOP_TIME') {
         handleStop();
     } else if (request.cmd === 'PRESSED_STOP') {
-        const query = { active: true, currentWindow: true };
+        const query = { active: true, lastFocusedWindow: true };
         chrome.tabs.query(query, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id, {
                 cmd: "RESET_CHARACTER"
@@ -45,7 +45,7 @@ function handleStart() {
     running = true;
     timerInterval = setInterval(() => {
         remainingSeconds--;
-        const query = { active: true, currentWindow: true };
+        const query = { active: true, lastFocusedWindow: true };
         chrome.tabs.query(query, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id, {
                 cmd: "MOVE_CHARACTER",
@@ -56,7 +56,7 @@ function handleStart() {
         if (remainingSeconds == 0) {
             handleStop();
             // notify open tab (popup should be closed)
-            const query = { active: true, currentWindow: true };
+            const query = { active: true, lastFocusedWindow: true };
             chrome.tabs.query(query, (tabs) => {
                 chrome.tabs.sendMessage(tabs[0].id, {
                     cmd: "MAKE_SOUND"
@@ -110,7 +110,7 @@ chrome.commands.onCommand.addListener(function (command) {
 });
 
 function showHide() {
-    const query = { active: true, currentWindow: true };
+    const query = { active: true, lastFocusedWindow: true };
     chrome.tabs.query(query, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, {
             cmd: "SHOW_HIDE"
@@ -119,10 +119,22 @@ function showHide() {
 }
 
 function move() {
-    const query = { active: true, currentWindow: true };
+    const query = { active: true, lastFocusedWindow: true };
     chrome.tabs.query(query, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, {
             cmd: "MOVE"
         });
     });
 }
+
+chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
+    if (info.url && urlRegex.test(info.url)) {
+        /* The tab with ID `tabId` has been updated to a URL
+         * in the `google.com` domain. Let's do something... */
+        let queryOptions = { active: true, lastFocusedWindow: true };
+        let tabs = chrome.tabs.query(queryOptions);
+        chrome.tabs.sendMessage(tabs[0].id,
+            { cmd: "SHOW" },
+        );
+    }
+});
