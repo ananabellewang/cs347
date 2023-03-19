@@ -230,9 +230,6 @@ class Timer {
                     <span>:</span>
                     <span>Seconds</span>
                 </div>
-                <div class="error_text">
-                    Please enter a valid number
-                </div>
                 <fieldset class="timer_input_container">
                     <input class="timer_text timer_text_hours" id="input_hrs" type="number" min="0" max="99" placeholder="00" value="" maxlength="2">
                     <span class="timer_text">:</span>
