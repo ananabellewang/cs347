@@ -49,13 +49,6 @@ class Timer {
                 await chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds, total: this.totalSeconds });
                 this.updateInterfaceTime();
             })();
-
-            // this.el.minutes.value = (parseInt(this.el.minutes.value) + 1).toString().padStart(2, "0");
-            // if (this.el.minutes.value >= 60) {
-            //     this.el.minutes.value = "0".padStart(2, "0");;
-            //     this.el.hours.value = (parseInt(this.el.hours.value) + 1).toString().padStart(2, "0");
-            // }
-            // this.remainingSeconds += 60;
         });
 
         this.el.reset.addEventListener("click", () => {
@@ -102,19 +95,6 @@ class Timer {
     }
 
     updateInterfaceControls() {
-        // (async () => {
-        //     const response = await chrome.runtime.sendMessage({ cmd: 'GET_TIME' });
-        //     if (response.running == false) {
-        //         this.el.control.innerHTML = `<span class="material-icons">play_arrow</span>`;
-        //         this.el.control.classList.add("timer_btn_play");
-        //         this.el.control.classList.remove("timer_btn_pause");
-        //     } else {
-        //         this.el.control.innerHTML = `<span class="material-icons">pause</span>`;
-        //         this.el.control.classList.add("timer_btn_pause");
-        //         this.el.control.classList.remove("timer_btn_play");
-        //     }
-        // })();
-        // }
         if (this.running === false) {
             this.el.control.innerHTML = `<span class="material-icons">play_arrow</span>`;
             this.el.control.classList.add("timer_btn_play");
@@ -132,7 +112,11 @@ class Timer {
         this.totalSeconds = this.remainingSeconds;
         (async () => {
             await chrome.runtime.sendMessage({ cmd: 'UPDATE_TIME', remaining: this.remainingSeconds, total: this.totalSeconds });
-            if (this.remainingSeconds == 0) return;
+
+            if (this.remainingSeconds == 0) {
+                await chrome.runtime.sendMessage({ cmd: 'PRESSED_STOP' });
+                return;
+            }
             await chrome.runtime.sendMessage({ cmd: 'START_TIME' });
             this.start();
         })();
@@ -176,9 +160,9 @@ class Timer {
                         // when timer stops!
                         if (this.remainingSeconds == 0) {
                             this.end();
+                            chrome.runtime.sendMessage({ cmd: 'TIMES_UP' });
                             const soundEffect = new Audio("assets/monkey!.m4a");
                             soundEffect.play();
-
                             return;
                         }
                     }
@@ -198,7 +182,7 @@ class Timer {
     end() {
         (async () => {
             this.stop();
-            await chrome.runtime.sendMessage({ cmd: 'STOP_TIME' });
+            await chrome.runtime.sendMessage({ cmd: 'STOP_INTERVAL' });
             this.remainingSeconds = 0;
             this.totalSeconds = 0;
             this.running = false;
@@ -217,9 +201,16 @@ class Timer {
     }
 
     setRemainingSeconds() {
-        const hours = ((this.el.hours.value == "") ? 0 : parseInt(this.el.hours.value));
-        const minutes = ((this.el.minutes.value == "") ? 0 : parseInt(this.el.minutes.value));
-        const seconds = ((this.el.seconds.value == "") ? 0 : parseInt(this.el.seconds.value));
+        const inputHrs = parseInt(this.el.hours.value);
+        const inputMin = parseInt(this.el.minutes.value);
+        const inputSec = parseInt(this.el.seconds.value);
+        if (Number.isNaN(inputHrs) || Number.isNaN(inputMin) || Number.isNaN(inputSec)) {
+            // show error msg
+        }
+
+        const hours = (this.el.hours.value == "") ? 0 : inputHrs;
+        const minutes = (this.el.minutes.value == "") ? 0 : inputMin;
+        const seconds = (this.el.seconds.value == "") ? 0 : inputSec;
         this.remainingSeconds = (hours * 3600) + (minutes * 60) + seconds;
     }
 
@@ -238,6 +229,9 @@ class Timer {
                     <span>Minutes</span>
                     <span>:</span>
                     <span>Seconds</span>
+                </div>
+                <div class="error_text">
+                    Please enter a valid number
                 </div>
                 <fieldset class="timer_input_container">
                     <input class="timer_text timer_text_hours" id="input_hrs" type="number" min="0" max="99" placeholder="00" value="" maxlength="2">

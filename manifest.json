@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "CS 347 project",
   "action": {
-    "default_popup": "hello.html",
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "assets/monkey_outline4.png",
       "32": "assets/monkey_outline4.png",
